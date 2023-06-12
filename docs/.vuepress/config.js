@@ -24,8 +24,18 @@ module.exports = {
   searchMaxSuggestions: 10,
   plugins: [
     ["@vuepress/back-to-top"],
-    ["@vuepress/last-updated"],
-    ['vuepress-plugin-code-copy', {successText:"复制成功!"}],
+    [
+      "@vuepress/last-updated",
+      {
+        transformer: (timestamp, lang) => {
+          // 不要忘了安装 moment
+          const moment = require("moment");
+          moment.locale(lang);
+          return moment(timestamp).fromNow();
+        },
+      },
+    ],
+    ["vuepress-plugin-code-copy", { successText: "复制成功!" }],
   ],
   //主题配置-----------------------------------------------------------------------------------------
   theme: "reco", //需要下载对应主题  npm install vuepress-theme-reco --save-dev
@@ -34,7 +44,8 @@ module.exports = {
     author: "恶作剧",
     authorAvatar: "/avatar.jpg",
     sidebarDepth: 2, // 将同时提取markdown中h2 和 h3 标题，显示在侧边栏上。
-    lastUpdated: "Last Updated", // 文档更新时间：每个文件git最后提交的时间
+    lastUpdated: true, // 文档更新时间：每个文件git最后提交的时间
+    dateFormat: 'YYYY-MM-DD HH:mm:ss', // 自定义时间格式
     //displayAllHeaders: true,//显示所有页面标题来链接，默认false
     // 在所有页面中启用自动生成子侧边栏，原 sidebar 仍然兼容
     subSidebar: "auto",
@@ -46,12 +57,12 @@ module.exports = {
       category: {
         location: 2, // 在导航栏菜单中所占的位置，默认2
         text: "博客", // 默认文案 “分类”
-        target:'_blank'
+        target: "_blank",
       },
       tag: {
         location: 3, // 在导航栏菜单中所占的位置，默认3
         text: "Tag", // 默认文案 “标签”
-        target:'_blank'
+        target: "_blank",
       },
       socialLinks: [
         // 信息栏展示社交信息
