@@ -12,5 +12,5 @@ git init
 git add -A
 git commit -m $message
 git branch -M master
-git remote add origin https://github.com/prank-xcw/myblogs.git
+#git remote add origin https://github.com/prank-xcw/myblogs.git
 git push -u origin master
