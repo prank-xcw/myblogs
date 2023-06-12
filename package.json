@@ -1,0 +1,20 @@
+{
+  "name": "vuepress",
+  "version": "1.0.0",
+  "description": "使用vuePress构建前端博客系统",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs"
+  },
+  "keywords": [
+    "oncePrank"
+  ],
+  "author": "恶作剧",
+  "license": "ISC",
+  "devDependencies": {
+    "vuepress": "^1.9.9",
+    "vuepress-plugin-code-copy": "^1.0.6",
+    "vuepress-theme-reco": "^1.6.17"
+  }
+}
