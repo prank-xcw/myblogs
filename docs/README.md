@@ -29,15 +29,18 @@ heroImageStyle: {
   borderRadius: '1rem',
   boxShadow: '0 5px 18px rgba(0,0,0,0.2)'
 }
-bgImage: wallpaper.gif
+bgImage: wallpaper.jpg
 bgImageStyle: {
-  height: '800px'
+  height: '600px'
 }
 ---
-<img src="https://ghchart.rshah.org/2016rshah" alt="2016rshah's Github chart" />
+<!-- <img src="https://ghchart.rshah.org/2016rshah" alt="2016rshah's Github chart" /> -->
 
 
 <style>
+.description{
+  color: #fff;
+}
 .anchor-down {
   display: block;
   margin: 12rem auto 0;
