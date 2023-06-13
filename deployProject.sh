@@ -2,7 +2,7 @@
 
 # 检查是否传入了 message 参数
 if [ -z "$1" ]; then
-    message="default deploy"
+    message="deploy"
 else
     message=$1
 fi
