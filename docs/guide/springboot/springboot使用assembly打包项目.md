@@ -54,52 +54,87 @@ deploy
 ### 1.pom引入相关依赖
 
 ```xml
+<!--springboot打包插件-->
+<plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+    <version>2.1.4.RELEASE</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>repackage</goal>
+            </goals>
+            <configuration>
+                <!--仅本地环境打springboot jar-->
+                <skip>${maven.skipSpringBoot}</skip>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+
+<!--定制化项目打包插件-->
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-assembly-plugin</artifactId>
     <version>3.1.0</version>
-    <configuration>
-        <!--打包方式一：官方提供的定制化打包方式，包括bin,jar-with-dependencies,src,project-->
-         <!--
-        <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-        </descriptorRefs>
-		-->
-
-        <!--打包方式二：指定assembly.xml文件-->
-        <descriptors>
-            <descriptor>./assembly/assembly.xml</descriptor>
-        </descriptors>
-    </configuration>
     <executions>
         <execution>
             <id>make-assembly</id>
             <phase>package</phase>
             <goals>
-                <!--只运行一次-->
                 <goal>single</goal>
             </goals>
+            <configuration>
+                <skipAssembly>${maven.skipAssembly}</skipAssembly>
+                <!--指定assembly.xml文件-->
+                <descriptors>
+                    <descriptor>./assembly/assembly.xml</descriptor>
+                </descriptors>
+            </configuration>
         </execution>
     </executions>
 </plugin>
-
+<!--maven打jar插件，若使用定制化打包则开启该插件-->
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-jar-plugin</artifactId>
+    <version>3.1.1</version>
+    <configuration>
+        <!--根据打包环境选择是否跳过插件-->
+        <skip>${maven.skipAssembly}</skip>
+        <includes>
+            <include>com/**</include>
+            <include>org/**</include>
+            <include>META-INF/**</include>
+        </includes>
+    </configuration>
+</plugin>
 
 <profiles>
+    <!--本地环境-->
     <profile>
-        <id>test</id>
+        <id>local</id>
         <properties>
-            <package.environment>test</package.environment>
+            <!--跳过springBoot打包-->
+            <maven.skipSpringBoot>false</maven.skipSpringBoot>
+            <!--跳过Assembly插件打包-->
+            <maven.skipAssembly>true</maven.skipAssembly>
         </properties>
-        <!--默认选择-->
         <activation>
+            <!--默认使用环境-->
             <activeByDefault>true</activeByDefault>
         </activation>
     </profile>
 
+    <!--测试环境-->
     <profile>
-        <id>prod</id>
+        <id>test</id>
         <properties>
-            <package.environment>prod</package.environment>
+            <!--跳过springBoot打包-->
+            <maven.skipSpringBoot>true</maven.skipSpringBoot>
+            <!--跳过Assembly插件打包-->
+            <maven.skipAssembly>false</maven.skipAssembly>
+            <package.environment>test</package.environment>
         </properties>
     </profile>
 </profiles>

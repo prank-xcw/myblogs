@@ -3,6 +3,8 @@ const sidebarConfig = require("./sidebarConfig");
 //导航栏
 const navConfig = require("./navConfig");
 module.exports = {
+  //host: "localhost", // ip
+  port: "8099", //端口号
   title: "prank",
   description: "记录开发问题",
   // 默认语言
@@ -12,7 +14,7 @@ module.exports = {
   //     title: "个人博客",
   //   },
   // },
-  base: "/", // 这是部署到github相关的配置
+  base: "/blogs/", // 这是部署到github相关的配置
   // 注入到当前页面的 HTML <head> 中的标签
   head: [
     ["link", { rel: "icon", href: "/favicon.ico" }], // 增加一个自定义的 favicon(网页标签的图标)

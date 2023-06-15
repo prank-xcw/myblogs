@@ -172,3 +172,36 @@ tags:
    ![](https://raw.githubusercontent.com/prank-xcw/images/master/imgs/image-20210421140919170.png)
 
    > alias 指向的目录需要和宿主机建立映射
+
+
+
+
+
+## 热部署Nginx
+
+### 查看容器挂载情况
+
+```shell
+#docker inspect -f '{{ range .Mounts }}{{ .Name }}:{{ .Destination }}{{ "\n" }}{{ end }}' 容器名称或ID
+
+docker inspect -f '{{ range .Mounts }}{{ .Name }}:{{ .Destination }}{{ "\n" }}{{ end }}' nginx-web
+
+docker inspect 【容器名称或ID】  | jq '.[0].Mounts'
+```
+
+![image-20230613142840649](https://raw.githubusercontent.com/prank-xcw/images/master/imgs/202306131428405.png)
+
+
+
+
+
+### 重新加载配置
+
+```shell
+#docker exec -it 【容器名或id】 nginx -s reload    使用无效使用下面命令
+
+docker exec -it 【容器名或id】 service nginx reload
+```
+
+![image-20230613143922374](https://raw.githubusercontent.com/prank-xcw/images/master/imgs/202306131448448.png)
+
