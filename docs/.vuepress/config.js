@@ -5,16 +5,16 @@ const navConfig = require("./navConfig");
 module.exports = {
   //host: "localhost", // ip
   port: "8099", //端口号
-  title: "prank",
-  description: "记录开发问题",
+  title: "迷糊笔记",
+  description: "迷糊的博客，记录开发问题，解决日常小问题",
   // 默认语言
-  // locales: {
-  //   "/": {
-  //     lang: "zh-CN",
-  //     title: "个人博客",
-  //   },
-  // },
-  base: "/blogs/", // 这是部署到github相关的配置
+  locales: {
+    "/": {
+      lang: "zh-CN",
+      title: "迷糊博客",
+    },
+  },
+  base: "/", // 这是部署到github相关的配置
   // 注入到当前页面的 HTML <head> 中的标签
   head: [
     ["link", { rel: "icon", href: "/favicon.ico" }], // 增加一个自定义的 favicon(网页标签的图标)
@@ -30,7 +30,7 @@ module.exports = {
       "@vuepress/last-updated",
       {
         transformer: (timestamp, lang) => {
-          // 不要忘了安装 moment
+          // 须安装日期插件  npm install moment
           const moment = require("moment");
           moment.locale(lang);
           return moment(timestamp).fromNow();
@@ -42,7 +42,7 @@ module.exports = {
   //主题配置-----------------------------------------------------------------------------------------
   theme: "reco", //需要下载对应主题  npm install vuepress-theme-reco --save-dev
   themeConfig: {
-    logo: "/logo.jpg",
+    logo: "/logo.png",
     author: "恶作剧",
     authorAvatar: "/avatar.jpg",
     sidebarDepth: 2, // 将同时提取markdown中h2 和 h3 标题，显示在侧边栏上。

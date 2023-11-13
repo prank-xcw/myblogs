@@ -24,6 +24,10 @@ git add -A
 git commit -m $message
 
 # 如果发布到 https://<USERNAME>.github.io
+# 关联远程仓库地址
+git remote add origin https://github.com/prank-xcw/prank-xcw.github.io
+git checkout -b master
+
 git push -f https://github.com/prank-xcw/prank-xcw.github.io master
 
 # 如果发布到 https://<USERNAME>.github.io/<REPO>

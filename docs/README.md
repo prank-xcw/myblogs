@@ -1,6 +1,6 @@
 ---
 home: true
-# heroImage: /logo.jpg
+# heroImage: /logo.png
 # actionText: 快速上手 →
 # actionLink: /guide/
 # features:
@@ -29,18 +29,21 @@ heroImageStyle: {
   borderRadius: '1rem',
   boxShadow: '0 5px 18px rgba(0,0,0,0.2)'
 }
-bgImage: wallpaper.jpg
-bgImageStyle: {
-  height: '600px'
-}
+# bgImage: wallpaper.jpg
+# bgImageStyle: {
+#   height: '600px'
+# }
 ---
 <!-- <img src="https://ghchart.rshah.org/2016rshah" alt="2016rshah's Github chart" /> -->
 
 
 <style>
-.description{
-  color: #fff;
+  /* 导航栏的logo图样式 */
+.navbar .logo{
+  border-radius: 0% !important;;
 }
+
+/*设置滑动按钮样式 */
 .anchor-down {
   display: block;
   margin: 12rem auto 0;
@@ -52,7 +55,7 @@ bgImageStyle: {
   animation: bounce-in 5s 3s infinite;
   position: absolute;
   left: 50%;
-  bottom: 30%;
+  bottom: 35%;
   margin-left: -10px;
   cursor: pointer;
 }
@@ -68,8 +71,8 @@ bgImageStyle: {
   width: 20px;
   height: 20px;
   display: block;
-  border-right: 3px solid #fff;
-  border-top: 3px solid #fff;
+  border-right: 3px solid #111;
+  border-top: 3px solid #111;
   transform: rotate(135deg);
   position: absolute;
   bottom: 10px;
@@ -79,13 +82,14 @@ bgImageStyle: {
   width: 20px;
   height: 20px;
   display: block;
-  border-right: 3px solid #fff;
-  border-top: 3px solid #fff;
+  border-right: 3px solid #111;
+  border-top: 3px solid #111;
   transform: rotate(135deg);
 }
 </style>
 
 <script>
+  /* 滑动按钮点击事件 */
 export default {
   mounted () {
     const ifJanchor = document.getElementById("JanchorDown"); 

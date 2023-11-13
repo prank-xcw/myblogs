@@ -235,7 +235,7 @@ select  NVL(SUM(c.num) ,0)  from class c
 
 
 
-## 四、日期格式互相转换
+## 日期格式互相转换
 
 **表中的日期类型转换为，时间戳、毫秒**
 
@@ -256,6 +256,27 @@ select
 	to_char(t.time/( 24 * 60 * 60 * 1000)  +  TO_DATE('1970-01-01 0:0:0', 'YYYY-MM-DD HH24:MI:SS'))    
 from test
 ```
+
+
+
+
+
+
+
+## 列数据转换为逗号分隔行数据
+
+**LISTAGG**
+
+```sql
+SELECT LISTAGG(url, ',') WITHIN GROUP (ORDER BY NULL) AS urlAll FROM tpp;
+
+-- LISTAGG(url, ',') 表示将 url 列的值连接成一个逗号分隔的字符串。
+-- WITHIN GROUP (ORDER BY NULL) 表示没有特定的排序，所有值都会被连接在一起。
+```
+
+
+
+
 
 
 
