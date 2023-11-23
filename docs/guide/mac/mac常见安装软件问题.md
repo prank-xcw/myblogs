@@ -1,3 +1,10 @@
+---
+title: mac常见安装软件问题
+categories: mac
+tags:
+ - mac
+---
+
 
 
 
