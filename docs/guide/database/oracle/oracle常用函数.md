@@ -11,7 +11,7 @@ tags:
 
 
 
-## 一、Oracle中 sys_guid()
+# 一、Oracle中 sys_guid()
 
 sys_guid(),是Oracle 8i 后提供的函数。SYS_GUID产生并返回一个十六进制**32位**的**全球唯一的标识符** 。在大多数平台,生成的标识符由主机标符，执行函数的进程或者线程标识符，和进程或线程的一个非重复的值(字节序列)
 大概就是长这个样子了
@@ -50,7 +50,7 @@ insert into TT_USER
 
 
 
-## 二、Oracle的单行函数
+# 二、Oracle的单行函数
 
 
 
