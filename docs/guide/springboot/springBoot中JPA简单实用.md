@@ -69,7 +69,7 @@ tags:
   3. springboot启动类添加注解
   
      ```java
-   @EnableJpaAuditing
+      @EnableJpaAuditing
      ```
   
   
@@ -355,3 +355,61 @@ queryFactory.select(
     .where(stringTemplate.eq(DateFormatUtils.format(new Date(),"YYYY-MM")));
 
 ```
+
+
+
+
+
+## EntityManager使用
+
+
+
+### 1.结果转换为数组
+
+#### 查询结果默认转换为对象数组
+
+```java
+String sql = "select a.id, a.USER_NAME, a.PASS_WORD from t_user a"
+Query query = entityManager.createNativeQuery(sql);
+List<Object[]> resultList =  pageQuery.getResultList();
+```
+
+
+
+### 2.结果转换为Map
+
+```java
+
+String sql = "select a.id, a.USER_NAME, a.PASS_WORD from t_user a"
+Query query = entityManager.createNativeQuery(sql);
+//设置转换类
+query.unwrap(NativeQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+List<Map<String,Object>> resultList =  pageQuery.getResultList();
+```
+
+
+
+
+
+### 3.结果转换为自定义类
+
+```java
+String sql = "select a.id, a.USER_NAME, a.PASS_WORD from t_user a"
+Query query = entityManager.createNativeQuery(sql);
+//设置转换类
+query.unwrap(NativeQuery.class).setResultTransformer(Transformers.aliasToBean(TUser.class));
+List<TUser> resultList =  pageQuery.getResultList();
+```
+
+
+
+> 注意：
+>
+> 方法三中查询的若是Oracle库，需要将查询字段别名加上引号，因为Oracle默认查询时会转换为大写，与映射的实体中驼峰命名的属性无法对应；
+>
+> 例如：`select a.id \"id\", a.USER_NAME \"userName\", a.PASS_WORD \"passWord\" from t_user a`
+
+
+
+
+
