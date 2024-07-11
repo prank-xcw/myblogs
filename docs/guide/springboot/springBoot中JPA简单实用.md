@@ -413,3 +413,55 @@ List<TUser> resultList =  pageQuery.getResultList();
 
 
 
+
+
+
+
+
+
+## 一对一使用
+
+**使用@OneToOne注解表示一对一查询**
+
+
+
+A类
+
+```java
+@Data
+@Entity
+@Table(name = "a")
+public class A implements Serializable {
+
+    @Id
+    @Column(name = "ID", length = 32)
+    private String id;
+    
+    private String name;
+    
+    private String bId;
+
+    @OneToOne
+    @JoinColumn(name = "bId", referencedColumnName = "id", insertable = false, updatable = false)
+    private B b;
+}
+```
+
+
+
+B类
+
+```java
+@Data
+@Entity
+@Table(name = "b")
+public class b implements Serializable {
+
+    @Id
+    @Column(name = "ID", length = 32)
+    private String id;
+    
+    private String no;
+}
+```
+

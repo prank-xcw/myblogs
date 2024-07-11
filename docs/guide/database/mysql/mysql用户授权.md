@@ -51,6 +51,9 @@ update user set password=password('123456') where user='roots';
 
 -- 5.7之后
 update user set authentication_string=password('123456') where user='roots';
+
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY '新密码';
 ```
 
 
@@ -58,5 +61,17 @@ update user set authentication_string=password('123456') where user='roots';
 ```sql
 -- 重名名
 rename user 'test3'@'%' to 'test1'@'%';
+```
+
+
+
+
+
+## 修改用户权限
+
+```sql
+#对指定用户在任何主机上 开放 插入、更新、修改、删除权限
+update mysql.user set Insert_priv='Y',Update_priv='Y',Delete_priv='Y',Create_priv='Y',Drop_priv='Y' 
+where user = 'root' and host = '%';
 ```
 

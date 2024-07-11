@@ -15,7 +15,11 @@ tags:
 
 jedis是redis的java客户端，通过它可以对redis进行操作，与之功能相似的还包括：Lettuce等。
 
-spring-boot-data-redis 内部实现了对Lettuce和jedis两个客户端的封装，默认使用的是Lettuc
+spring-boot-data-redis 内部实现了对Lettuce和jedis两个客户端的封装，默认使用的是Lettuct
+
+
+
+官方文档：https://github.com/alibaba/jetcache/blob/master/docs/CN/Readme.md
 
 
 

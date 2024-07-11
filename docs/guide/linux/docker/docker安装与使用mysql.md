@@ -17,7 +17,7 @@ tags:
 
 ## 安装mysql
 
-1. **搜索相关版本 **
+1. **搜索相关版本**
 
    ```
    docker search mysql
