@@ -29,8 +29,7 @@ tags:
 ## 加密
 
 ```Text
-java -cp  /Users/xu/.m2/repository/org/jasypt/jasypt/1.9.2/jasypt-1.9.2.jar 
-org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI input="abc123" password=SWEpUd3hB8thu1GA algorithm=PBEWithMD5AndDES
+java -cp  /Users/xu/.m2/repository/org/jasypt/jasypt/1.9.2/jasypt-1.9.2.jar org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI input="abc123" password=SWEpUd3hB8thu1GA algorithm=PBEWithMD5AndDES
 ```
 
 
@@ -40,8 +39,7 @@ org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI input="abc123" password=SWEpUd3
 ## 解密
 
 ```Text
-java -cp  /Users/xu/.m2/repository/org/jasypt/jasypt/1.9.2/jasypt-1.9.2.jar 
-org.jasypt.intf.cli.org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input="IJMB3S7dJAVcEmXCuElvpz3YzMHqMMM3" password=SWEpUd3hB8thu1GA algorithm=PBEWithMD5AndDES
+java -cp  /Users/xu/.m2/repository/org/jasypt/jasypt/1.9.2/jasypt-1.9.2.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input="IJMB3S7dJAVcEmXCuElvpz3YzMHqMMM3" password=SWEpUd3hB8thu1GA algorithm=PBEWithMD5AndDES
 ```
 
 
