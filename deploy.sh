@@ -19,13 +19,14 @@ cd docs/.vuepress/dist
 # 如果是发布到自定义域名
 echo 'index.onceprank.cn' > CNAME
 
-    git init
-    git add -A
+#首次推送需要init
+#git init
+git add -A
 git commit -m $message
 
 # 如果发布到 https://<USERNAME>.github.io
 # 关联远程仓库地址
-git remote add origin https://github.com/prank-xcw/prank-xcw.github.io
+#git remote add origin https://github.com/prank-xcw/prank-xcw.github.io
 git checkout -b master
 
 git push -f https://github.com/prank-xcw/prank-xcw.github.io master

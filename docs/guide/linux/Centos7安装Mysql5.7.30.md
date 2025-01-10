@@ -364,6 +364,34 @@ FLUSH PRIVILEGES;                                    #刷新
 
 
 
+# 更改密码策略
+
+```sql
+-- 查看当前的密码策略
+SHOW VARIABLES LIKE 'validate_password%';
+-- 设置密码复杂度-- 设置为 LOW，放宽密码复杂性要求
+SET GLOBAL validate_password_policy = LOW;
+-- 设置最小密码长度为 6
+SET GLOBAL validate_password_length = 6;
+```
+
+
+
+# Mysql新增用户
+
+```sql
+-- 创建用户指定密码
+CREATE USER 'hive'@'localhost' IDENTIFIED BY '12345678'; 
+-- 设置可远程连接
+GRANT ALL ON *.* TO 'hive'@'localhost';
+#刷新mysql系统权限关系表
+flush privileges;
+```
+
+
+
+
+
 
 
 > 查看安装路径

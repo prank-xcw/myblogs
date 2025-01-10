@@ -13,6 +13,10 @@ tags:
 
 # oracle常用查询
 
+> user_tab_comments 表名备注表
+>
+> user_col_comments 表字段备注表
+
 
 
 ## 指定表获取表名注释
@@ -30,6 +34,20 @@ select * from user_tab_comments where table_name='TABLE_NAME' and owner = 'OWNER
 ```sql
 -- select * from all_col_comments where owner = 'OWNER_NAME' AND table_name='TABLE_NAME' ;
 select * from all_col_comments where owner = 'GXB2B2C' AND table_name='T_BOSS_ORG' ;
+
+```
+
+
+
+## 根据表名生成DDL字段注释
+
+> 将生成的sql，多引号替换为单引号
+
+```sql
+select    concat('comment on column ',table_name,'.',column_name,' is ',CONCAT('"',comments,'";')) from user_col_comments where table_name = '表名' AND owner='库名'
+
+--oracle种 concat函数不支持超过两个参数，所以使用 || 拼接查询
+select 'comment on column ' || table_name || '.'|| column_name || ' is "' || comments || ' ";' from user_col_comments where table_name = '表名' ;
 
 ```
 

@@ -81,9 +81,7 @@ SkyWalking 逻辑上分为四部分: 探针, 平台后端, 存储和用户界面
     <!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
 
     <Properties>
-        <!-- 格式化输出：%date表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %msg：日志消息，%n是换行符 %logger{36} 表示 Logger 名字最长36个字符-->
-
-
+     
         <!--1.文件输出格式-->
         <property name="file_pattern" value="%d{yyyy-MM-dd HH:mm:ss} [%traceId] [%thread] [%-5level]  %msg %l%n" />
         <!--2.控制台显示日志格式-->
