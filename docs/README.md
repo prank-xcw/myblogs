@@ -42,7 +42,6 @@ heroImageStyle: {
 .navbar .logo{
   border-radius: 0% !important;;
 }
-
 /*设置滑动按钮样式 */
 .anchor-down {
   display: block;
@@ -103,7 +102,6 @@ export default {
       this.scrollFn();
     })
   },
-
   methods: {
     scrollFn() {
       const windowH = document.getElementsByClassName('hero')[0].clientHeight; // 获取窗口高度

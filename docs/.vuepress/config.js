@@ -46,9 +46,9 @@ module.exports = {
     author: "恶作剧",
     authorAvatar: "/avatar.jpg",
     sidebarDepth: 2, // 将同时提取markdown中h2 和 h3 标题，显示在侧边栏上。
-    lastUpdated: true, // 文档更新时间：每个文件git最后提交的时间
+    lastUpdated: "更新时间", // 文档更新时间：每个文件git最后提交的时间
     dateFormat: "YYYY-MM-DD HH:mm:ss", // 自定义时间格式
-    //displayAllHeaders: true,//显示所有页面标题来链接，默认false
+    displayAllHeaders: true,//显示所有页面标题来链接，默认false
     // 在所有页面中启用自动生成子侧边栏，原 sidebar 仍然兼容
     subSidebar: "auto",
     // 代码块样式（默认——tomorrow）

@@ -19,8 +19,7 @@ cd docs/.vuepress/dist
 # 如果是发布到自定义域名
 echo 'index.onceprank.cn' > CNAME
 
-#首次推送需要init
-#git init
+git init
 git add -A
 git commit -m $message
 
