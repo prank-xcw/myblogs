@@ -9,15 +9,11 @@ tags:
 
 
 
-# oracle12C命令
+## oracle12C命令
 
 
 
-
-
-
-
-## 创建用户
+### 创建用户
 
 ```sql
 -- 查看数据库是不是CDB  
@@ -25,6 +21,8 @@ tags:
 -- PDB：私有账户
 select CDB from v$database;
 
+-- 查看全部用户
+SELECT username, user_id, created, account_status FROM dba_users ORDER BY created DESC;
 
 -- 创建用户 create user <username> identified by <password>;
 create user MASS identified by xcw1017#;
@@ -38,9 +36,9 @@ select * from dba_users;
 
 
 
-## 表空间
+### 表空间
 
-### 查看、创建、删除
+#### 查看、创建、删除
 
 ```sql
 -- 创建表空间  create tablespace <tablespacename> datafile <xx.dbf> size 100m;
@@ -79,7 +77,7 @@ alter user MASS default tablespace MASS;
 
 
 
-## 授权grant
+### 授权grant
 
 ```sql
 --授予dba权限
@@ -122,7 +120,7 @@ grant create sequence to userName; (包含有创建、修改、删除以及选�
 
 
 
-## 权限回收revoke
+### 权限回收revoke
 
 ```sql
 --回收dba权限 
@@ -142,7 +140,7 @@ revoke create table from userName; (包含有create index权限, alter table, dr
 
 
 
-## 权限查看
+### 权限查看
 
 ```sql
 -- 查看用户权限
@@ -156,7 +154,7 @@ select * from user_role_privs;
 
 
 
-## 解锁与锁定
+### 解锁与锁定
 
 ```sql
 -- 解锁对应用户  alter user <userName> account unlock;
@@ -170,11 +168,17 @@ alter user scott account lock;
 
 
 
-## 更改密码
+### 更改密码
 
 ```sql
 -- 更改密码 alter user <userName> identified by <newPassword>;
 alter user scott identified by xcw1017#;
+
+-- 延长密码有效期至 365 天
+ALTER PROFILE your_profile LIMIT PASSWORD_LIFE_TIME 365;
+
+-- 设置密码永不过期（谨慎使用）
+ALTER PROFILE your_profile LIMIT PASSWORD_LIFE_TIME UNLIMITED;
 ```
 
 
@@ -187,9 +191,33 @@ alter user scott identified by xcw1017#;
 
 
 
-# oracle切换pdb模式
+## oracle切换pdb模式
 
-## 1.sqlplus进入管理员模式
+> cdb与pdb区别
+>
+> cdb共享公共数据
+>
+> pdb独立的业务数据库
+
+
+
+```sql
+-- 在 CDB 中执行，查询全部服务名
+SELECT name, pdb FROM v$services;
+
+
+ALTER PLUGGABLE DATABASE ALL CLOSE IMMEDIATE; -- 关闭所有 PDB
+
+SHUTDOWN IMMEDIATE; -- 关闭CDB
+STARTUP; -- 启动 CDB（自动进入 MOUNT 状态）
+ALTER DATABASE OPEN; -- 打开 CDB
+```
+
+
+
+
+
+### 1.sqlplus进入管理员模式
 
 ```sql
 sqlplus / as sysdba
@@ -211,29 +239,19 @@ show con_name;
 
 
 
-
-
-
-
-
-
-## 2.查询并打开PDB
+### 2.查询并打开PDB
 
 ```sql
+-- 查询pdb名字和打开状态
 select con_id,name,open_mode from v$pdbs;
-```
 
-`可发现oracle12c默认创建了一个pdb名称为ORCLPDB，但是默认为mounted，需要打开`
-
-```sql
+-- 可发现oracle12c默认创建了一个pdb名称为ORCLPDB，但是默认为mounted，需要打开
 alter pluggable database ORCLPDB open;
 ```
 
 
 
-
-
-## 3.创建触发器
+### 3.创建触发器
 
 ```sql
 -- 创建触发器，并指定pdb和实例同时开启
@@ -247,7 +265,7 @@ create trigger OPEN_ORCLPDB after startup on database
 
 ```
 
-## 4.修改当前容器为PDB
+### 4.修改当前会话为PDB
 
 ```sql
 -- 修改容器连接模式
@@ -255,5 +273,108 @@ alter session set container=ORCLPDB;
 
 -- 查看连接模式
 show con_name;
+```
+
+
+
+
+
+
+
+## oracle更改监听文件
+
+```bash
+# 查看数据库信息
+lsnrctl status
+
+# 重新加载配置（无需停止）
+lsnrctl reload  
+
+# 完全重启
+lsnrctl stop && lsnrctl start 
+
+```
+
+
+
+### listener.ora
+
+监听连接请求，路由到正确的数据库实例。
+
+```bash
+# 定义静态注册的数据库实例/服务列表
+SID_LIST_LISTENER =
+  (SID_LIST =
+    (SID_DESC =
+      (SID_NAME = CLRExtProc)  										# 服务名，固定为 CLRExtProc
+      (ORACLE_HOME = C:\application\oracle\oracleHome\product)		# Oracle安装目录
+      (PROGRAM = extproc)											# 调用的外部程序（extproc.exe）
+      (ENVS = "EXTPROC_DLLS=ONLY:C:\application\oracle\oracleHome\product\bin\oraclr12.dll")
+    )
+    (SID_DESC =
+      (GLOBAL_DBNAME= ORCL)  
+      (SID_NAME = ORCL)
+      (ORACLE_HOME = C:\application\oracle\oracleHome\product)
+    )
+    (SID_DESC =
+      (GLOBAL_DBNAME= orclpdb)
+      (SID_NAME = orclpdb)
+      (ORACLE_HOME = C:\application\oracle\oracleHome\product)
+    )
+  )
+
+# 定义监听器的网络地址和协议配置
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = 10.211.55.5)(PORT = 1521))
+      (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+    )
+  )
+
+```
+
+
+
+### tnsnames.ora 
+
+将服务别名转换为网络地址，简化连接输入。
+
+```bash
+LISTENER_ORCL =
+  (ADDRESS = (PROTOCOL = TCP)(HOST = 10.211.55.5)(PORT = 1521))
+
+
+ORACLR_CONNECTION_DATA =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+    )
+    (CONNECT_DATA =
+      (SID = CLRExtProc)
+      (PRESENTATION = RO)
+    )
+  )
+
+# ORCL服务 CDB模式
+#ORCL =
+#  (DESCRIPTION =
+#    (ADDRESS = (PROTOCOL = TCP)(HOST = 10.211.55.5)(PORT = 1521))
+#    (CONNECT_DATA =
+#      (SERVER = DEDICATED)
+#      (SERVICE_NAME = orcl)
+#    )
+#  )
+
+
+# orclpdb服务  pdb模式
+orclpdb =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 10.211.55.5)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = orclpdb)
+    )
+  )
 ```
 

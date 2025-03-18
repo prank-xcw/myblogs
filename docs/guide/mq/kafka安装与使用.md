@@ -52,18 +52,15 @@ tags:
      nohup bin/zookeeper-server-start.sh  config/zookeeper.properties &
      # nohup 表示后台用户退出也不关闭
      # & 后台运行
-     
-     
-     
      # -daemon 表示后台启动
      ```
-
+     
    - 启动kafka
-
+   
      ```shell
      nohup bin/kafka-server-start.sh -daemon config/server.properties &
      ```
-
+   
 4. **消息发送**
 
    - **创建一个名称为test的topic(主题消息)**

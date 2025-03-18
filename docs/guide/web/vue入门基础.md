@@ -45,8 +45,8 @@ tags:
 
 **常用的css预处理器有：SASS,LASS**
 
-- **SASS：**基于Ruby，需要学习Ruby，上手难度高
-- **LASS：**基于NodeJS，使用简单。
+- `SASS：`基于Ruby，需要学习Ruby，上手难度高
+- `LASS：`基于NodeJS，使用简单。
 
 
 
@@ -62,10 +62,10 @@ tags:
 
 ### UI框架
 
-- **Ant-Design：**阿里巴巴出品，基于React框架。
-- **Element-UI：**饿了么出品，基于Vue框架。
-- **Bootstrap：**Twitter推出的前端开源工具包。
-- **AmazeUI：**HTML5跨屏前端框架。
+- `Ant-Design：`阿里巴巴出品，基于React框架。
+- `Element-UI：`饿了么出品，基于Vue框架。
+- `Bootstrap：` Twitter推出的前端开源工具包。
+- `AmazeUI：`HTML5跨屏前端框架。
 
 
 
@@ -294,7 +294,7 @@ var app = new Vue({
 
 
 
-## vue3响应式布局
+## vue3核心语法
 
 
 
@@ -343,6 +343,7 @@ function addAge() {
         <p>价格: {{ car.price }}</p>
 
         <button @click="addPrice">价格上调</button>
+        <button @click="changeCar">改变汽车</button>
     </div>
 </template>
 <script setup lang="ts" name="car">
@@ -350,11 +351,25 @@ import { reactive } from 'vue'
 // 使用 reactive 创建响应式对象，并正确标注类型
 let car = reactive({name: '保时捷', price: 1000})
 
+
 // 方法
 function addPrice() {
     car.price += 100
 }
+
+function changeCar() {
+    Object.assign(car, {name: '奔驰', price: 2000})
+}
+
 </script>
+<style scoped>
+.car {
+    background-color: #d840b9;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+}
+</style>
 ```
 
 
@@ -405,6 +420,176 @@ function addPrice() {
     // 指定某个属性转换为响应式对象
     let name2 = toRef(car,'name');
 </script>
+```
+
+
+
+
+
+
+
+### Watch
+
+**作用：**监视数据变化
+
+
+
+可监视数据的四种情况
+
+> ref定义的数据
+>
+> recative定义的数据
+>
+> 函数的返回值
+>
+> 包含上述内容的数组
+
+
+
+#### 情况一
+
+监视`ref`创建的数据
+
+```vue
+ <template>
+    <!-- watch监视使用 -->
+    <div class="watch-test">
+        <h1>情况一：监视【ref】定义的【基本数据】数据</h1>
+        <p>count: {{ count }}</p>
+        <button @click="count++">count++</button>
+    </div>
+</template>
+<script setup lang="ts">
+import { ref, reactive, watch } from 'vue'
+
+// ref
+const count = ref(0)
+// watch，情况一：监视【ref】定义的【基本数据】数据
+ var stopWatch =  watch(count, (newVal, oldVal) => {
+    console.log('count:', newVal, oldVal)
+    if (newVal > 10) {
+        console.log('count大于10，停止监视')
+        stopWatch()
+    }
+})
+
+</script>
+<style scoped>
+.watch-test {
+    margin: 20px;
+    padding: 20px;
+    background-color: #eba1c4;
+    border-radius: 10px;
+} 
+</style>
+```
+
+
+
+#### 情况二
+
+监视`ref`创建的对象类型数据
+
+> 注意⚠️  
+>
+> - 若修改的是`ref`定义的对象中的属性， `newValue`和`oldValue`都是最新的值，因为是同一个对象
+> - 若修改的是`ref`定义的对象， `newValue`是新值`oldValue`是旧值，因为不是同一个对象
+
+```vue
+ `newValue`和`oldValue`都是最新的值，因为是同一个对象<template>
+    <!-- watch监视使用 -->
+    <div class="watch-test">
+        <h1>情况二：监视【ref】定义的【对象类型】数据</h1>
+        <p>姓名: {{ person.name }}</p>
+        <p>年龄: {{ person.age }}</p>
+        <button @click="changeName">修改姓名</button>
+        <button @click="person.age++">增加年龄</button>
+        <button @click="changePerson">修改对象</button>
+    </div>
+</template>
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+
+const person = ref({name: '张三', age: 18})
+
+
+
+// 修改姓名
+function changeName() {
+    person.value.name += '~'
+}
+// 修改对象
+function changePerson() {
+    person.value = {name: '李四', age: 20};
+}
+
+/*
+watch，情况二：监视【ref】定义的【对象类型】数据，监视对象引用地址，若监视对象属性变化，需设置deep: true
+参数一：监视对象
+参数二：回调函数
+参数三：配置项（ deep: true, immediate: true ）
+*/
+var stopWatch2 =  watch(person, (newVal, oldVal) => {
+    console.log('person:', newVal, oldVal)
+}, {deep: true})
+
+</script>
+<style scoped>
+.watch-test {
+    margin: 20px;
+    padding: 20px;
+    background-color: #eba1c4;
+    border-radius: 10px;
+} 
+</style>
+```
+
+
+
+#### 情况三
+
+```vue
+ `newValue`和`oldValue`都是最新的值，因为是同一个对象<template>
+    <!-- watch监视使用 -->
+    <div class="watch-test">
+        <h1>情况三：监视【reactive】定义的数据</h1>
+        <p>姓名: {{ person.name }}</p>
+        <p>年龄: {{ person.age }}</p>
+        <button @click="changeName">修改姓名</button>
+        <button @click="person.age++">增加年龄</button>
+        <button @click="changePerson">修改对象</button>
+    </div>
+</template>
+<script setup lang="ts">
+import { reactive, watch } from 'vue'
+
+const person = reactive({name: '张三', age: 18})
+
+
+
+// 修改姓名
+function changeName() {
+    person.name += '~'
+}
+// 修改对象
+function changePerson() {
+    Object.assign(person, {name: '李四', age: 20})
+}
+
+// watch，情况三：监视【reactive】定义的数据，且默认开启了深度监视
+var stopWatch =  watch(person, (newVal, oldVal) => {
+    console.log('person:', newVal, oldVal)
+})
+
+</script>
+<style scoped>
+.watch-test {
+    margin: 20px;
+    padding: 20px;
+    background-color: #eba1c4;
+    border-radius: 10px;
+} 
+</style>
 ```
 
 
