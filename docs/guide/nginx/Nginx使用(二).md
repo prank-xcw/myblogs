@@ -1,9 +1,8 @@
 ---
 title: Nginx使用(二)
 abbrlink: 38371
-categories: linux
+categories: nginx
 tags:
-  - linux
   - nginx
 ---
 
@@ -79,3 +78,12 @@ tags:
 
 
 
+```mermaid
+sequenceDiagram
+participant 用户
+participant 系统
+
+
+用户->>系统: 登录请求
+Note right of 系统: 验证用户信息
+系统-->>用户: 登录成功

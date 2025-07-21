@@ -80,16 +80,16 @@ alter user MASS default tablespace MASS;
 ### 授权grant
 
 ```sql
---授予dba权限
+-- 授予dba权限(谨慎执行)
 grant dba to userName
 
---授予用户登录数据库的权限： 
+-- 授予用户登录数据库的权限： 
 grant create session to userName;
 
---授予用户基本操作权限；
+-- 授予用户基本操作权限；
 grant resource to userName;
 
---授予用户操作表空间的权限：
+-- 授予用户操作表空间的权限：
 grant unlimited tablespace to userName;
 grant create tablespace to userName;
 grant alter tablespace to userName;
@@ -97,24 +97,24 @@ grant drop tablespace to userName;
 grant manage tablespace to userName;
 grant create user,drop user,alter user,create any view,connect,resource,dba,create session,create any sequence to userName;
 
---授权该用户可以查询某个表的权限
+-- 授权该用户可以查询某个表的权限
 grant select on 授权的表名 to 用户名; 
---授权该用户可以更新某个表的权限
+-- 授权该用户可以更新某个表的权限
 grant update on 授权的表名 to 用户名; 
---授权该用户可以插入某个表的权限
+-- 授权该用户可以插入某个表的权限
 grant insert on 授权的表名 to 用户名; 
---授权该用户可以删除某个表的权限
+-- 授权该用户可以删除某个表的权限
 grant delete on 授权的表名 to 用户名; 
 
---授予用户操作表的权限：
+-- 授予用户操作表的权限：
 grant create table to userName; (包含有create index权限, alter table, drop table权限)
---授予用户操作视图的权限:
+-- 授予用户操作视图的权限:
 grant create view to userName; (包含有alter view, drop view权限)
---授予用户操作触发器的权限：
+-- 授予用户操作触发器的权限：
 grant create trigger to userName; (包含有alter trigger, drop trigger权限)
---授予用户操作存储过程的权限：
+-- 授予用户操作存储过程的权限：
 grant create procedure to userName;(包含有alter procedure, drop procedure 和function 以及 package权限)
---授予用户操作序列的权限：
+-- 授予用户操作序列的权限：
 grant create sequence to userName; (包含有创建、修改、删除以及选择序列)
 ```
 
@@ -174,11 +174,14 @@ alter user scott account lock;
 -- 更改密码 alter user <userName> identified by <newPassword>;
 alter user scott identified by xcw1017#;
 
--- 延长密码有效期至 365 天
-ALTER PROFILE your_profile LIMIT PASSWORD_LIFE_TIME 365;
+-- 延长密码有效期（例如设为1年）
+ALTER PROFILE DEFAULT LIMIT PASSWORD_LIFE_TIME 365;
 
 -- 设置密码永不过期（谨慎使用）
 ALTER PROFILE your_profile LIMIT PASSWORD_LIFE_TIME UNLIMITED;
+
+-- 修改最大失败尝试次数（例如设为无限次）
+ALTER PROFILE DEFAULT LIMIT FAILED_LOGIN_ATTEMPTS UNLIMITED;
 ```
 
 
@@ -245,8 +248,11 @@ show con_name;
 -- 查询pdb名字和打开状态
 select con_id,name,open_mode from v$pdbs;
 
--- 可发现oracle12c默认创建了一个pdb名称为ORCLPDB，但是默认为mounted，需要打开
+-- 手动打开pdb，可发现oracle12c默认创建了一个pdb名称为ORCLPDB，但是默认为mounted，需要打开
 alter pluggable database ORCLPDB open;
+-- 保存pdb状态
+ALTER PLUGGABLE DATABASE ORCLPDB SAVE STATE;
+
 ```
 
 
@@ -376,5 +382,150 @@ orclpdb =
       (SERVICE_NAME = orclpdb)
     )
   )
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## oracle导入dmp文件
+
+### imp命令
+
+```sql
+-- 导入整个数据库
+imp "mass/xcw1017!@10.211.55.5:1521/orclpdb" file=\\Mac\Home\Downloads\orapub5.dmp full=y
+imp USERID=system/password@orcl FILE=full_backup.dmp FULL=Y LOG=full_import.log
+
+
+-- 导入指定表
+imp USERID=system/password@orcl FILE=full_backup.dmp TABLES=(emp,dept) IGNORE=Y
+
+-- 仅导入表结构
+imp USERID=system/password@orcl FILE=full_backup.dmp ROWS=N
+
+```
+
+
+
+### exp命令
+
+```sql
+-- 以 SYS 用户执行
+@?/rdbms/admin/utlpwdmg.sql
+
+-- 导出整个数据库
+exp USERID=mass/xcw1017!@orclpdb FILE=full_backup.dmp FULL=Y LOG=full_export.log
+
+-- 导出指定用户的对象
+exp USERID=system/password@orcl FILE=scott_data.dmp OWNER=scott
+
+-- 导出指定表
+exp USERID=scott/tiger@orcl FILE=emp_dept.dmp TABLES=(emp, dept)
+
+-- 只导出表结构
+exp USERID=scott/tiger@orcl FILE=structure.dmp ROWS=N
+
+
+```
+
+
+
+
+
+### impdb
+
+```sql
+-- 导入整个用户
+impdp system/password@target_db FULL=Y DIRECTORY=dpump_dir DUMPFILE=full_db.dmp LOGFILE=imp_full.log
+
+-- 导入指定数据库
+impdp mass/xcw1017!@orclpdb SCHEMAS=mass  DUMPFILE=MASS_DB.DMP LOGFILE=imp_mass_db.log
+```
+
+
+
+
+
+### expdb
+
+```sql
+-- 导出整个数据库
+expdp mass/xcw1017!@orclpdb FULL=Y  DUMPFILE=full_db.dmp LOGFILE=exp_full.log
+
+-- 指定用户对象导出
+expdp mass/xcw1017!@orclpdb SCHEMAS=mass  DUMPFILE=mass_db.dmp LOGFILE=exp_mass_db.log
+
+
+ C:\APPLICATION\ORACLE\ORACLEHOME\ORDIR\ADMIN\ORCL\DPDUMP\07662D3E940E42E18FE7173F3DB7AF88\MASS_DB.DMP
+```
+
+
+
+
+
+
+
+> exp高级用法
+>
+> 
+
+1. 使用参数文件
+
+   创建配置文件 `params.par`
+
+   ```bash
+   # params.par 内容
+   FILE=expdat.dmp
+   TABLES=(emp, dept)
+   ROWS=Y
+   DIRECT=Y
+   LOG=export.log
+   ```
+
+   执行命令时指定参数文件
+
+   ```bash
+   exp USERID=scott/tiger@orcl PARFILE=params.par
+   
+   ```
+
+2. 多文件导出（大文件拆分）
+
+   ```bash
+   # 表示分为part1.dmp、part2.dmp、part3.dmp文件，每个文件最大2G
+   exp USERID=system/password@orcl FILE=part1.dmp,part2.dmp,part3.dmp FILESIZE=2G FULL=Y
+   ```
+
+   
+
+
+
+
+
+
+
+## oracle清空数据库表
+
+```sql
+-- SELECT TABLE_NAME FROM USER_TABLES 查询到全部表
+
+BEGIN
+  FOR t IN (SELECT TABLE_NAME FROM USER_TABLES) 
+  LOOP
+    EXECUTE IMMEDIATE 'DROP TABLE "' || t.TABLE_NAME || '" CASCADE CONSTRAINTS PURGE';
+  END LOOP;
+END;
+
 ```
 

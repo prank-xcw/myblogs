@@ -1,9 +1,8 @@
 ---
-title: Nginx安装使用(一)
-categories: linux
+title: Nginx使用(一)
+categories: nginx
 abbrlink: 64d53267
 tags:
-  - linux
   - nginx
 ---
 
@@ -127,7 +126,7 @@ whereis nginx
 
 
 
-## 启动、停止
+## Nginx命令
 
 ```shell
 cd /usr/local/nginx/sbin/

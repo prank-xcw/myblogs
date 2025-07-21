@@ -38,6 +38,7 @@ module.exports = {
       },
     ],
     ["vuepress-plugin-code-copy", { successText: "复制成功!" }],
+    ['vuepress-plugin-mermaidjs']
   ],
   //主题配置-----------------------------------------------------------------------------------------
   theme: "reco", //需要下载对应主题  npm install vuepress-theme-reco --save-dev

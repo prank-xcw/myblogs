@@ -15,12 +15,12 @@ abbrlink: 66daeef6
 ```sql
 /*授予用户通过外网IP对于该数据库的全部权限*/
 grant all privileges on `xcgs`.* to 'manager'@'%' ;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
 /*
 all privileges：表示将所有权限授予给用户。也可指定具体的权限，如：SELECT、CREATE、DROP等。
 on：表示这些权限对哪些数据库和表生效，格式：数据库名.表名，这里写“*”表示所有数据库，所有表。如果我要指定将权限应用到test库的user表中，可以这么写：test.user
 to：将权限授予哪个用户。格式：”用户名”@”登录IP或域名”。%表示没有限制，在任何主机都可以登录。比如：'manager'@'%'，表示manager这个用户可以在任何IP段登录
 */
-
 
 grant select on xcgs.* to 'manager'@'%';  /*给予查询权限*/
 
