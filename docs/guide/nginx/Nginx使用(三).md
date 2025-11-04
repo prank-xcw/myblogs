@@ -206,3 +206,100 @@ http {
 
 
 
+
+
+
+
+
+
+
+
+## 开启HTTPS
+
+1. 创建SSL证书
+
+   ```sh
+   # 生成私钥
+   openssl genrsa -out /etc/ssl/private/nginx-50096.key 2048
+   
+   # 生成证书签名请求（CSR）
+   openssl req -new -key /etc/ssl/private/nginx-50096.key \
+     -out /etc/ssl/certs/nginx-50096.csr \
+     -subj "/CN=your-domain.com"
+     
+   # 生成自签名证书（有效期365天）
+   openssl x509 -req -days 365 \
+     -in /etc/ssl/certs/nginx-50096.csr \
+     -signkey /etc/ssl/private/nginx-50096.key \
+     -out /etc/ssl/certs/nginx-50096.crt
+   ```
+
+   
+
+2. 配置nginx.conf
+
+   ```nginx
+   server {
+       listen 50096 ssl;  # 重点：指定端口和ssl
+       server_name your-domain.com;  # 改为你的域名或IP
+   
+       # SSL证书配置
+       ssl_certificate /etc/ssl/certs/nginx-50096.crt;
+       ssl_certificate_key /etc/ssl/private/nginx-50096.key;
+   
+       # SSL优化参数
+       ssl_protocols TLSv1.2 TLSv1.3;
+       ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
+       ssl_prefer_server_ciphers on;
+       ssl_session_cache shared:SSL:10m;
+       ssl_session_timeout 10m;
+   
+       # 安全响应头
+       add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+       add_header X-Content-Type-Options nosniff;
+       add_header X-Frame-Options DENY;
+   
+       # 应用配置
+       location / {
+           root /var/www/html;
+           index index.html;
+           try_files $uri $uri/ =404;
+       }
+   
+       # 错误页面
+       error_page 500 502 503 504 /50x.html;
+       location = /50x.html {
+           root /usr/share/nginx/html;
+       }
+       
+       
+              # 代理API请求
+           location /api/ {
+                   # 注意：这里将请求转发到服务器B的HTTP服务
+                   proxy_pass http://10.110.45.17:9999/;   # 注意末尾的斜杠，确保去除/api前缀
+                   proxy_set_header Host $host;
+                   proxy_set_header X-Real-IP $remote_addr;
+                   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                   proxy_set_header X-Forwarded-Proto $scheme;
+   
+   				# 隐藏后端返回的CORS头
+   			    proxy_hide_header 'Access-Control-Allow-Origin';
+                   # CORS响应头 - 放在代理location中
+                   add_header 'Access-Control-Allow-Origin' $http_origin always;
+                   add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE' always;
+                   add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
+                   add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
+                   add_header 'Access-Control-Allow-Credentials' 'true' always;  # 添加此项支持身份验证
+           }
+   
+   
+   }
+   
+   ```
+
+   
+
+
+
+
+
