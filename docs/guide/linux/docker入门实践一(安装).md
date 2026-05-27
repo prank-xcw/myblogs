@@ -295,3 +295,49 @@ vim  /var/lib/docker/containers/[hash_of_the_container]/hostconfig.json
 
 
 
+
+
+## 数据卷（volume）
+
+```sh
+# 创建名为n8n_data数据卷
+docker volume create n8n_data
+
+# 查看数据卷
+docker volume ls
+
+# 查看详情
+docker volume inspect n8n_data
+
+
+# 备份数据卷
+docker run --rm -v n8n_data:/source -v $(pwd):/backup alpine \
+  tar czf /backup/n8n_backup.tar.gz -C /source .
+
+# 删除数据卷（慎用！会丢失所有数据）
+docker volume rm n8n_data
+```
+
+
+
+
+
+```sh
+# 创建名为n8n_data数据卷
+docker volume create n8n_data
+
+# 运行 n8n 容器并挂载数据卷、挂载到容器内n8n数据目录
+docker run -d \
+  --name n8n \
+  -p 5678:5678 \
+  -v n8n_data:/home/node/.n8n \  
+  n8nio/n8n
+
+```
+
+
+
+
+
+
+

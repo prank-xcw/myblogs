@@ -1,11 +1,13 @@
+// 顶部统一 require，避免在 transformer 中反复加载
+const moment = require("moment");
 //侧边栏
 const sidebarConfig = require("./sidebarConfig");
 //导航栏
 const navConfig = require("./navConfig");
 module.exports = {
   //host: "localhost", // ip
-  port: "8099", //端口号
-  title: "迷糊笔记",
+  port: 8099, //端口号
+  title: "迷糊博客",
   description: "迷糊的博客，记录开发问题，解决日常小问题",
   // 默认语言
   locales: {
@@ -25,20 +27,20 @@ module.exports = {
   search: true,
   searchMaxSuggestions: 10,
   plugins: [
-    ["@vuepress/back-to-top"],
+    // 注：reco 主题已自带 @vuepress-reco/back-to-top，无需重复声明 @vuepress/back-to-top
     [
       "@vuepress/last-updated",
       {
         transformer: (timestamp, lang) => {
-          // 须安装日期插件  npm install moment
-          const moment = require("moment");
           moment.locale(lang);
           return moment(timestamp).fromNow();
         },
       },
     ],
     ["vuepress-plugin-code-copy", { successText: "复制成功!" }],
-    ['vuepress-plugin-mermaidjs']
+    ['vuepress-plugin-mermaidjs'],
+    // 本地插件：为缺少 frontmatter.date 的文章注入 git 首次提交日期，首页排序依赖它
+    [require("./plugins/inject-date")],
   ],
   //主题配置-----------------------------------------------------------------------------------------
   theme: "reco", //需要下载对应主题  npm install vuepress-theme-reco --save-dev
@@ -60,12 +62,10 @@ module.exports = {
       category: {
         location: 2, // 在导航栏菜单中所占的位置，默认2
         text: "博客", // 默认文案 “分类”
-        target: "_blank",
       },
       tag: {
         location: 3, // 在导航栏菜单中所占的位置，默认3
         text: "Tag", // 默认文案 “标签”
-        target: "_blank",
       },
       socialLinks: [
         // 信息栏展示社交信息
@@ -73,6 +73,6 @@ module.exports = {
       ],
     },
     nav: navConfig,
-    //sidebar: sidebarConfig,
+    sidebar: sidebarConfig,
   },
 };

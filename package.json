@@ -12,6 +12,10 @@
   ],
   "author": "恶作剧",
   "license": "ISC",
+  "engines": {
+    "node": ">=14 <17",
+    "npm": ">=6"
+  },
   "devDependencies": {
     "vuepress": "^1.9.9",
     "vuepress-plugin-code-copy": "^1.0.6",

@@ -1,85 +1,59 @@
-//侧边栏
-// const autosidebar = require('vuepress-auto-sidebar-doumjun')
+/**
+ * 自动扫描 docs 下的指定目录，生成 VuePress 侧边栏 children 数组
+ *
+ * 约定：
+ *  - 仅纳入 .md 文件，排除 README.md / index.md
+ *  - 同级文件按文件名 "-" 之后的尾段数字升序排列
+ *  - 没有数字尾段的文件按字符串自然顺序排列
+ *  - 子目录变成可折叠分组
+ */
+
 const fs = require("fs");
 const path = require("path");
 
-/**
- * 过滤所要导航的文件
- * 文件名 包含.md 但 不包含  README */
-function checkFileType(path) {
-  return path.includes(".md") && !path.includes("README");
+const EXCLUDE = new Set(["README.md", "index.md"]);
+
+function isMd(n) {
+  return n.endsWith(".md") && !EXCLUDE.has(n);
 }
 
-/**
- * 格式化文件路径*/
-function prefixPath(basePath, dirPath) {
-  let index = basePath.indexOf("/");
-  // 去除一级目录地址
-  basePath = basePath.slice(index, path.length);
-  // replace用于处理windows电脑的路径用\表示的问题
-  return path.join(basePath, dirPath).replace(/\\/g, "/");
+function trailingNum(name) {
+  const tail = name.replace(/\.md$/, "").match(/[^-]*$/)[0];
+  const n = parseInt(tail, 10);
+  return Number.isNaN(n) ? NaN : n;
 }
 
-/**
- * 截取文档路径*/
-function getPath(path, ele) {
-  let item = prefixPath(path, ele);
-  if (item.split("/")[6]) {
-    return (
-      item.split("/")[3] +
-      "/" +
-      item.split("/")[4] +
-      "/" +
-      item.split("/")[5] +
-      "/" +
-      item.split("/")[6]
-    );
-  } else if (item.split("/")[5]) {
-    return (
-      item.split("/")[3] + "/" + item.split("/")[4] + "/" + item.split("/")[5]
-    );
-  } else if (item.split("/")[4]) {
-    return item.split("/")[3] + "/" + item.split("/")[4];
-  } else {
-    return item.split("/")[3];
-  }
+function cmpName(a, b) {
+  const ax = trailingNum(a);
+  const bx = trailingNum(b);
+  if (Number.isNaN(ax) && Number.isNaN(bx)) return a.localeCompare(b);
+  if (Number.isNaN(ax)) return 1;
+  if (Number.isNaN(bx)) return -1;
+  return ax - bx;
 }
 
-/**
- * 递归获取分组信息并排序*/
-function getGroupChildren(path, ele, root) {
-  let pa = fs.readdirSync(path + "/" + ele + "/");
-  let palist = pa;
-  pa = palist.sort(function (a, b) {
-    return (
-      a.replace(".md", "").match(/[^-]*$/) -
-      b.replace(".md", "").match(/[^-]*$/)
-    );
-  });
-  pa.forEach(function (item, index) {
-    let info = fs.statSync(path + "/" + ele + "/" + item);
-    if (info.isDirectory()) {
-      let children = [];
-      let group = {};
-      group.title = item.split("-")[0];
-      group.collapsable = true;
-      group.sidebarDepth = 2;
-      getGroupChildren(path + "/" + ele, item, children);
-      group.children = children;
-      root.push(group);
-    } else {
-      if (checkFileType(item)) {
-        root.push(getPath(path + "/" + ele, item));
-      }
+function build(dir, prefix) {
+  const entries = fs.readdirSync(dir).sort(cmpName);
+  const children = [];
+  for (const item of entries) {
+    const full = path.join(dir, item);
+    const stat = fs.statSync(full);
+    if (stat.isDirectory()) {
+      children.push({
+        title: item.split("-")[0],
+        collapsable: true,
+        sidebarDepth: 2,
+        children: build(full, `${prefix}/${item}`),
+      });
+    } else if (isMd(item)) {
+      children.push(`${prefix}/${item}`);
     }
-  });
-}
-/**
- * 初始化*/
-function getChildren(path, ele) {
-  var root = [];
-  getGroupChildren(path, ele, root);
-  return root;
+  }
+  return children;
 }
 
-module.exports = { getChildren: getChildren };
+function getChildren(docsRoot, ele) {
+  return build(path.join(docsRoot, ele), `/${ele}`);
+}
+
+module.exports = { getChildren };

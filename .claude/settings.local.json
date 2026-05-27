@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(NODE_OPTIONS=--openssl-legacy-provider npm run build)",
+      "Bash(NODE_OPTIONS=--openssl-legacy-provider npx vuepress dev docs)",
+      "Bash(curl -s http://localhost:8099)",
+      "Bash(kill %1)",
+      "Bash(wait)",
+      "Bash(./deployProject.sh 首页排序插件与侧边栏自动生成修复 *)"
+    ]
+  }
+}
